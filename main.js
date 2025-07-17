@@ -39,6 +39,44 @@ const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.position.set(10, 10, 10);
 scene.add(directionalLight);
 
+// === LANES ===
+const laneWidth = 2;
+const laneDepth = 50;
+const laneMaterial = new THREE.MeshBasicMaterial({ color: 0x333333, side: THREE.DoubleSide });
+
+for (let i = -1; i <= 1; i++) {
+  const laneGeometry = new THREE.PlaneGeometry(laneWidth, laneDepth);
+  const lane = new THREE.Mesh(laneGeometry, laneMaterial);
+  lane.rotation.x = -Math.PI / 2;
+  lane.position.x = i * laneWidth;
+  lane.position.z = -laneDepth / 2;
+  lane.position.y = 0.01; // Slightly above the ground to prevent z-fighting
+  scene.add(lane);
+}
+
+// === LANE LOGIC ===
+const lanes = [-2, 0, 2]; // x-positions of 3 lanes
+let currentLaneIndex = 1; // start in middle
+
+function moveLeft() {
+  if (currentLaneIndex > 0) {
+    currentLaneIndex--;
+    cube.position.x = lanes[currentLaneIndex];
+  }
+}
+
+function moveRight() {
+  if (currentLaneIndex < lanes.length - 1) {
+    currentLaneIndex++;
+    cube.position.x = lanes[currentLaneIndex];
+  }
+}
+
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowLeft') moveLeft();
+  if (e.key === 'ArrowRight') moveRight();
+});
+
 //animating
 function animate() {
 
